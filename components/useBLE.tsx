@@ -163,6 +163,18 @@ function useBLE(): BluetoothLowEnergyApi {
     }
   };
 
+  const writechar = async (device : Device , write_val : string) => {
+    if (device) {
+      device.writeCharacteristicWithoutResponseForService(
+        HEART_RATE_UUID,
+        HEART_RATE_CHARACTERISTIC,
+        write_val
+        );
+    } else {
+      console.log('No Device Connected');
+    }
+  };
+
   return {
     scanForPeripherals,
     requestPermissions,
