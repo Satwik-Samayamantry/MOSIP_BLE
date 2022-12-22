@@ -7,7 +7,14 @@ import {
   View,
 } from 'react-native';
 
-import BLEPeripheral from 'react-native-ble-peripheral'
+import {NativeModules, Button} from 'react-native';
+
+
+// import BLEPeripheral from 'react-native-ble-peripheral'
+
+const {BLEModule} = NativeModules;
+
+
 
 function create_UUID(){
   var dt = new Date().getTime();
@@ -19,34 +26,52 @@ function create_UUID(){
   return uuid;
 }
 
-function funcalls()
-{
-  const service_uuid = create_UUID();
-  const Characteristic_uuid_1 = '00002137-0000-1000-8000-00805f9b34fb'
-  const Characteristic_uuid_2 = '00002237-0000-1000-8000-00805f9b34fb'
-  BLEPeripheral.addService(service_uuid, true) //for primary service
-  BLEPeripheral.addCharacteristicToService(service_uuid, Characteristic_uuid_1, 16 | 1, 8) //this is a Characteristic with read and write permissions and notify property
-  //BLEPeripheral.addCharacteristicToService(service_uuid, '00002237-0000-1000-8000-00805f9b34fb', 1, 8)
-  console.log(service_uuid)
-  console.log(Characteristic_uuid_1)
-  // BLEPeripheral.addService('0000180d-0000-1000-8000-00805f9b34fb', true) 
-  // BLEPeripheral.addCharacteristicToService('0000180d-0000-1000-8000-00805f9b34fb', '00002a37-0000-1000-8000-00805f9b34fb', 16 | 1, 8) 
-  BLEPeripheral.sendNotificationToDevices('0000180d-0000-1000-8000-00805f9b34fb', '00002a37-0000-1000-8000-00805f9b34fb', [0x10,0x01,0xA1,0x80]) //sends a notification to all connected devices that, using the char uuid given
-  // BLEPeripheral.setName('RNBLETEST')
+// function funcalls()
+// {
+//   const service_uuid = create_UUID();
+//   const Characteristic_uuid_1 = '00002137-0000-1000-8000-00805f9b34fb'
+//   const Characteristic_uuid_2 = '00002237-0000-1000-8000-00805f9b34fb'
+
+//   BLEPeripheral.addService(service_uuid, true) //for primary service
+//   BLEPeripheral.addCharacteristicToService(service_uuid, Characteristic_uuid_1, 16 | 1, 8) //this is a Characteristic with read and write permissions and notify property
+//   //BLEPeripheral.addCharacteristicToService(service_uuid, '00002237-0000-1000-8000-00805f9b34fb', 1, 8)
   
-  BLEPeripheral.start()
+//   // console.log(service_uuid)
+//   // console.log(Characteristic_uuid_1)
+  
+//   // BLEPeripheral.addService('0000180d-0000-1000-8000-00805f9b34fb', true) 
+//   // BLEPeripheral.addCharacteristicToService('0000180d-0000-1000-8000-00805f9b34fb', '00002a37-0000-1000-8000-00805f9b34fb', 16 | 1, 8) 
+  
+//   // BLEPeripheral.sendNotificationToDevices('0000180d-0000-1000-8000-00805f9b34fb', '00002a37-0000-1000-8000-00805f9b34fb', [0x10,0x01,0xA1,0x80]) //sends a notification to all connected devices that, using the char uuid given
+//   // BLEPeripheral.setName('RNBLETEST')
+  
+//   BLEPeripheral.start()
+//   .then(res => {
+//        console.log(res)
+//   }).catch(error => {
+//        console.log(error)
+//   })
+
+// }
+
+function stopfunc()
+{
+  BLEModule.stop()
+}
+
+
+function startfunc()
+{
+  BLEModule.addService('0000180d-0000-1000-8000-00805f9b34fb', true) 
+  BLEModule.addCharacteristicToService('0000180d-0000-1000-8000-00805f9b34fb', '00002a37-0000-1000-8000-00805f9b34fb', 16 | 1, 8) //this is a Characteristic with read and write permissions and notify property
+  // BLEModule.addCharacteristicToService(service_uuid, '00002237-0000-1000-8000-00805f9b34fb', 1, 8)
+
+  BLEModule.start()
   .then(res => {
        console.log(res)
   }).catch(error => {
        console.log(error)
   })
-  //console.log(service_uuid)
-}
-
-function stopfunc()
-{
- BLEPeripheral.stop()
-
 }
 
 
@@ -54,30 +79,24 @@ function stopfunc()
 
 const App = () => {
 
+  
   return (
     <SafeAreaView style={styles.container}>
+
       <View style={styles.heartRateTitleWrapper}>
         <Text style={styles.heartRateTitleText}>
           Press Start to turn on peripheral
-        </Text>
-
-                  
-                  
+        </Text>                 
       </View>
-      {/* <TouchableOpacity onPress={disconnectFromDevice} style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>Disconnenct</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={scanForDevices} style={styles.ctaButton}>
-        <Text style={styles.ctaButtonText}>Scan</Text>
-      </TouchableOpacity> */}
-      <TouchableOpacity onPress={funcalls} style={styles.ctaButton}>
-      <Text style={styles.ctaButtonText}>Start</Text>
 
+      <TouchableOpacity onPress={startfunc} style={styles.ctaButton}>
+      <Text style={styles.ctaButtonText}>Start</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={stopfunc} style={styles.ctaButton}>
       <Text style={styles.ctaButtonText}>Stop</Text>
-
       </TouchableOpacity>
+
     </SafeAreaView>
   );
 };
