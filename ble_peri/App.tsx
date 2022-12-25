@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
 } from 'react-native';
 
 import {NativeModules, Button} from 'react-native';
@@ -59,13 +60,17 @@ function stopfunc()
   BLEModule.stop()
 }
 
+let service1:string = '0000180d-0000-1000-8000-00805f9b34fb';
+let char1:string = '00002a37-0000-1000-8000-00805f9b34fb';
 
 function startfunc()
 {
-  BLEModule.addService('0000180d-0000-1000-8000-00805f9b34fb', true) 
-  BLEModule.addCharacteristicToService('0000180d-0000-1000-8000-00805f9b34fb', '00002a37-0000-1000-8000-00805f9b34fb', 16 | 1, 8) //this is a Characteristic with read and write permissions and notify property
+  BLEModule.addService(service1, true) 
+  BLEModule.addCharacteristicToService(service1, char1, 16 | 1, 16) //this is a Characteristic with read and write permissions and notify property
   // BLEModule.addCharacteristicToService(service_uuid, '00002237-0000-1000-8000-00805f9b34fb', 1, 8)
 
+
+  
   BLEModule.start()
   .then(res => {
        console.log(res)
@@ -74,7 +79,28 @@ function startfunc()
   })
 }
 
+let val1 = '0';
+function updateval(value)
+{
+  val1=value;
+  // console.log(val1)
+}
 
+function onChange()
+{
+    console.log(val1 + " written into char val")
+    BLEModule.writeval(service1,char1, val1, value=>{console.log(value)});
+    // console.log(9999999999)
+}
+
+function reader()
+{
+  BLEModule.readval(
+    service1,
+    char1,
+    value=>{console.log("char value is "+ value)}
+    );
+}
 
 
 const App = () => {
@@ -88,6 +114,24 @@ const App = () => {
           Press Start to turn on peripheral
         </Text>                 
       </View>
+
+      <View style={styles.heartRateTitleWrapper}>
+      <TextInput
+        style={styles.heartRateTitleText}
+        placeholder="Type value here!"
+        onChangeText={newText => updateval(newText)}
+        
+      />
+
+      <TouchableOpacity onPress={onChange} style={styles.ctaButton}>
+      <Text style={styles.ctaButtonText}>update</Text>
+      </TouchableOpacity>
+    
+    </View>
+
+      <TouchableOpacity onPress={reader} style={styles.ctaButton}>
+      <Text style={styles.ctaButtonText}>Read</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity onPress={startfunc} style={styles.ctaButton}>
       <Text style={styles.ctaButtonText}>Start</Text>
